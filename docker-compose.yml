@@ -1,0 +1,25 @@
+version: '3'
+services:
+  # Proxies requests to internal services
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse_proxy
+    depends_on:
+        - flutter-test
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d/
+      - ./nginx/custom:/etc/custom
+    ports:
+      - 80:80
+      - 443:443
+  # main application
+  flutter-test:
+    image: flutter-test
+    container_name: flutter_test
+    build:
+      context: ./
+    volumes:
+      - ./:/user/src/app/
+    ports:
+      - 5000
+    restart: on-failure
